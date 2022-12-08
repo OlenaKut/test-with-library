@@ -6,10 +6,17 @@ export function FetchData() {
   const [error, setError] = useState("");
 
   function handleErrors(response) {
-    console.log(response);
     if (!response.ok) {
-      setError("Some Error");
-      throw Error("Some Error");
+      if (response.status === 404) {
+        setError("Not found");
+        throw Error("Not found");
+      } else if (response.status === 403) {
+        setError("Forbiden for you");
+        throw Error("Forbiden for you");
+      } else {
+        setError("Some Error");
+        throw Error("Some Error");
+      }
     }
     return response;
   }
@@ -18,9 +25,8 @@ export function FetchData() {
     fetch("https://www.greetingsapi.com/random")
       .then(handleErrors)
       .then((response) => response.json())
-      .then((response) => setData(response));
-
-    // .catch(setError);
+      .then((response) => setData(response))
+      .catch(() => console.log("someError"));
   }, []);
 
   if (data) {
